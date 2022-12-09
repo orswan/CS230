@@ -92,7 +92,7 @@ loss_uMLP1(x,y) = Flux.Losses.mse( abs.(D * (y[1:nfft,:] .* exp.(2*pi*im*uMLP1(x
 uCNN1 = Chain(Conv((5,), 1 => 8, relu; pad = SamePad()),Conv((5,), 8 => 16, relu; pad = SamePad()),MaxPool((4,)),
     Conv((5,), 16 => 32, relu; pad = SamePad()),Conv((5,), 32 => 64, relu; pad = SamePad()),MaxPool((5,)),
     Flux.flatten,Dense(10*64,100))
-loss_uCNN1(x,y) = Flux.Losses.mse( abs.(D * (y[1:nfft,:] .* exp.(2*pi*im*uCNN1(x)))) ,y[nfft+1:end,:])
+loss_uCNN1(x,y) = Flux.Losses.mse( abs.(D * (y[1:nfft,1,:] .* exp.(2*pi*im*uCNN1(x)))) ,y[nfft+1:end,1,:])
 # data = format_conv_data(unsupervised_dataset(nfft,m))
 # batched_data_uCNN1 = Flux.Data.DataLoader((data,data),batchsize=64)
 # ls = train_and_monitor!(loss_uCNN1,uCNN1,batched_data_uCNN1,0.001,100,data,data,1)

@@ -10,13 +10,17 @@ DFTcentered(N::Integer) = [exp(-2π*im*i*j/N)/sqrt(N) for i=ceil(Int,-(N-1)/2):c
 #--------------------------------------------------------------------------------------
 # Phase retrieval error
 
-function PRerror(g::Array{T,N},G::Array{T,N},psi::Array{T,N},ft) where N where T<:Real
+function PRerror(g::Array{T,N},G::Array{T,N},psi::Array{T,N},ft;shift=false) where N where T<:Real
     # ft is an FFT object.  Use this method if you already have an FFT computed.
-    sum(abs2.( abs.( ft*(g .* exp.(2*pi*im*psi)) ./ sqrt(*(size(g)...)) ) - G ))
+    pred = abs.( ft*(g .* exp.(2*pi*im*psi)) ./ sqrt(*(size(g)...)) )
+    shift && (pred = fftshift(pred))
+    sum(abs2.( pred - G ))
 end
-function PRerror(g::Array{T,N},G::Array{T,N},psi::Array{T,N}) where N where T<:Real
+function PRerror(g::Array{T,N},G::Array{T,N},psi::Array{T,N};shift=false) where N where T<:Real
     # Use this method to automatically get the FFT. 
-    sum(abs2.( abs.( fft*(g .* exp.(2*pi*im*psi)) ./ sqrt(*(size(g)...)) ) - G ))
+    pred = abs.( fft*(g .* exp.(2*pi*im*psi)) ./ sqrt(*(size(g)...)) )
+    shift && (pred = fftshift(pred))
+    sum(abs2.( pred - G ))
 end
 
 #--------------------------------------------------------------------------------------
